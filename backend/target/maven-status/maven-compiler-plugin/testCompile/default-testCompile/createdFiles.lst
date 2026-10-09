@@ -1,0 +1,4 @@
+com\securetodo\AuthControllerTest.class
+com\securetodo\SecurityIsolationTest.class
+com\securetodo\TaskControllerTest.class
+com\securetodo\ReminderSchedulerTest.class

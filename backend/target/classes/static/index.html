@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="description" content="Secure Smart To-Do List and Reminder Application - Organize tasks, yearly planning, and real reminders." />
+  <meta name="theme-color" content="#4f46e5" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="SecureTodo" />
+
+  <title>SecureTodo — Smart Tasks &amp; Reminders</title>
+
+  <!-- PWA Manifest & Icons -->
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/responsive.css" />
+</head>
+<body>
+
+<div id="app-root">
+
+  <!-- Desktop & Tablet Sidebar -->
+  <aside class="sidebar" role="navigation" aria-label="Main Navigation">
+    <div class="brand-header">
+      <div class="brand-icon" aria-hidden="true">✓</div>
+      <div>
+        <div class="brand-title">SecureTodo</div>
+        <div class="brand-subtitle">Smart &amp; Secure Planner</div>
+      </div>
+    </div>
+
+    <ul class="nav-links">
+      <li>
+        <a class="nav-item active" data-view="dashboard" role="button" tabindex="0">
+          <div class="nav-item-content">
+            <span class="nav-item-icon" aria-hidden="true">📊</span>
+            <span>Dashboard</span>
+          </div>
+        </a>
+      </li>
+      <li>
+        <a class="nav-item" data-view="tasks" role="button" tabindex="0">
+          <div class="nav-item-content">
+            <span class="nav-item-icon" aria-hidden="true">📝</span>
+            <span>My Tasks</span>
+          </div>
+        </a>
+      </li>
+      <li>
+        <a class="nav-item" data-view="calendar" role="button" tabindex="0">
+          <div class="nav-item-content">
+            <span class="nav-item-icon" aria-hidden="true">📅</span>
+            <span>Calendar</span>
+          </div>
+        </a>
+      </li>
+      <li>
+        <a class="nav-item" data-view="upcoming" role="button" tabindex="0">
+          <div class="nav-item-content">
+            <span class="nav-item-icon" aria-hidden="true">⏳</span>
+            <span>Upcoming</span>
+          </div>
+        </a>
+      </li>
+      <li>
+        <a class="nav-item" data-view="completed" role="button" tabindex="0">
+          <div class="nav-item-content">
+            <span class="nav-item-icon" aria-hidden="true">✅</span>
+            <span>Completed</span>
+          </div>
+        </a>
+      </li>
+      <li>
+        <a class="nav-item" data-view="settings" role="button" tabindex="0">
+          <div class="nav-item-content">
+            <span class="nav-item-icon" aria-hidden="true">⚙️</span>
+            <span>Settings</span>
+          </div>
+        </a>
+      </li>
+    </ul>
+
+    <!-- User Profile Footer -->
+    <div class="sidebar-user">
+      <div class="user-info">
+        <div class="user-avatar" id="user-avatar-initials">U</div>
+        <div class="user-details">
+          <div class="user-name" id="user-display-name">Loading...</div>
+          <div class="user-email" id="user-display-email">user@domain.com</div>
+        </div>
+      </div>
+      <button class="action-btn" id="logout-btn" title="Sign Out" aria-label="Sign out">🚪</button>
+    </div>
+  </aside>
+
+  <!-- Main View Area -->
+  <main class="main-wrapper">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1 class="view-title" id="topbar-view-title">Dashboard</h1>
+      </div>
+
+      <div class="topbar-actions">
+        <button class="btn-primary" id="topbar-add-task-btn" title="Add Task (Hotkey: N)">
+          <span>+</span>
+          <span>New Task</span>
+        </button>
+
+        <button class="icon-btn" id="notification-bell-btn" title="Reminders &amp; Notification Center" aria-label="Notifications">
+          <span aria-hidden="true">🔔</span>
+          <span class="notification-badge" id="notif-unread-badge" style="display: none;">0</span>
+        </button>
+
+        <button class="icon-btn" id="theme-toggle-btn" title="Toggle Light / Dark Mode" aria-label="Toggle theme">
+          <span id="theme-icon" aria-hidden="true">🌙</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Scrollable View Container -->
+    <section class="view-content">
+
+      <!-- 1. DASHBOARD VIEW -->
+      <div class="view-panel active" id="panel-dashboard">
+        <!-- Welcome Banner & Progress Ring -->
+        <div class="dashboard-welcome">
+          <div class="welcome-text">
+            <h2 id="dash-greeting">Good day!</h2>
+            <p id="dash-date">Loading date...</p>
+          </div>
+          <div class="progress-card">
+            <div class="progress-info">
+              <div class="progress-percent" id="dash-progress-num">0%</div>
+              <div class="progress-label" id="dash-progress-label">0 of 0 tasks completed</div>
+            </div>
+            <button class="btn-primary" id="dash-add-task-btn" style="background: rgba(255,255,255,0.25); box-shadow: none;">+ Add Task</button>
+          </div>
+        </div>
+
+        <!-- Metric Summary Cards -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-icon-wrap primary" aria-hidden="true">📋</div>
+            <div>
+              <div class="metric-number" id="metric-today-total">0</div>
+              <div class="metric-title">Today's Tasks</div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon-wrap warning" aria-hidden="true">⏳</div>
+            <div>
+              <div class="metric-number" id="metric-today-pending">0</div>
+              <div class="metric-title">Pending Today</div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon-wrap danger" aria-hidden="true">⚠️</div>
+            <div>
+              <div class="metric-number" id="metric-overdue">0</div>
+              <div class="metric-title">Overdue Tasks</div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon-wrap success" aria-hidden="true">⚡</div>
+            <div>
+              <div class="metric-number" id="metric-high-priority">0</div>
+              <div class="metric-title">High Priority</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7-Day Compact Strip -->
+        <div class="weekly-strip-card">
+          <div class="section-header">
+            <div class="section-title">Next 7 Days Overview</div>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Click a day to view its tasks</span>
+          </div>
+          <div class="days-strip" id="dash-weekly-strip">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- Two Column Tasks Layout -->
+        <div class="dashboard-columns">
+          <div>
+            <div class="section-header">
+              <div class="section-title">Today's Tasks</div>
+            </div>
+            <div class="task-list" id="dash-today-tasks">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+
+          <div>
+            <div class="section-header">
+              <div class="section-title" style="color: var(--danger);">Overdue Tasks</div>
+            </div>
+            <div class="task-list" id="dash-overdue-tasks" style="margin-bottom: 24px;">
+              <!-- Rendered dynamically -->
+            </div>
+
+            <div class="section-header">
+              <div class="section-title" style="color: var(--warning);">Urgent &amp; High Priority</div>
+            </div>
+            <div class="task-list" id="dash-urgent-tasks">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. MY TASKS VIEW -->
+      <div class="view-panel" id="panel-tasks">
+        <div class="toolbar">
+          <div class="search-input-wrap">
+            <span class="search-icon" aria-hidden="true">🔍</span>
+            <input type="text" class="search-input" id="tasks-search-input" placeholder="Search tasks by title or description... (Press '/' to focus)" />
+          </div>
+
+          <select class="filter-select category-select" id="tasks-category-filter">
+            <option value="">All Categories</option>
+          </select>
+
+          <select class="filter-select" id="tasks-priority-filter">
+            <option value="">All Priorities</option>
+            <option value="LOW">Low</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="HIGH">High</option>
+            <option value="URGENT">Urgent</option>
+          </select>
+
+          <select class="filter-select" id="tasks-sort-select">
+            <option value="scheduledDate_asc">Date (Earliest First)</option>
+            <option value="scheduledDate_desc">Date (Latest First)</option>
+            <option value="priority_desc">Highest Priority First</option>
+            <option value="deadline_asc">Upcoming Deadline</option>
+            <option value="createdAt_desc">Recently Created</option>
+          </select>
+        </div>
+
+        <div class="task-list" id="tasks-view-list">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- 3. CALENDAR & YEARLY PLANNING VIEW -->
+      <div class="view-panel" id="panel-calendar">
+        <div class="calendar-controls">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <button class="btn-secondary" id="cal-prev-btn" title="Previous Month/Year">&larr; Prev</button>
+            <button class="btn-secondary" id="cal-today-btn">Today</button>
+            <button class="btn-secondary" id="cal-next-btn" title="Next Month/Year">Next &rarr;</button>
+            <h3 class="calendar-month-year" id="cal-header-title">Calendar</h3>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <select class="filter-select" id="cal-view-toggle">
+              <option value="month">Month View</option>
+              <option value="year">Yearly Planning View</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Month Grid View -->
+        <div id="cal-month-view">
+          <div class="calendar-grid">
+            <div class="calendar-weekday">Sun</div>
+            <div class="calendar-weekday">Mon</div>
+            <div class="calendar-weekday">Tue</div>
+            <div class="calendar-weekday">Wed</div>
+            <div class="calendar-weekday">Thu</div>
+            <div class="calendar-weekday">Fri</div>
+            <div class="calendar-weekday">Sat</div>
+          </div>
+          <div class="calendar-grid" id="cal-grid-cells" style="border-top: none;">
+            <!-- Generated dynamically -->
+          </div>
+        </div>
+
+        <!-- Yearly Planning View -->
+        <div id="cal-year-view" style="display: none;">
+          <div class="yearly-grid" id="cal-year-grid">
+            <!-- 12 Month Summary Cards -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. UPCOMING VIEW -->
+      <div class="view-panel" id="panel-upcoming">
+        <div class="section-header" style="margin-bottom: 16px;">
+          <div class="section-title">Future Scheduled Tasks</div>
+          <span style="font-size: 0.85rem; color: var(--text-muted);">Organized for tomorrow and future years</span>
+        </div>
+        <div class="task-list" id="upcoming-view-list">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- 5. COMPLETED VIEW -->
+      <div class="view-panel" id="panel-completed">
+        <div class="section-header" style="margin-bottom: 16px;">
+          <div class="section-title">Completed Tasks History</div>
+          <span style="font-size: 0.85rem; color: var(--text-muted);">Tasks you have accomplished</span>
+        </div>
+        <div class="task-list" id="completed-view-list">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- 6. SETTINGS VIEW -->
+      <div class="view-panel" id="panel-settings">
+        <div style="max-width: 760px; display: flex; flex-direction: column; gap: 24px;">
+
+          <!-- Profile Settings -->
+          <div class="metric-card" style="display: block;">
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 16px;">Account &amp; Profile</h3>
+            <form id="settings-profile-form" style="display: flex; flex-direction: column; gap: 14px;">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="settings-name-input">Full Name</label>
+                  <input type="text" class="form-input" id="settings-name-input" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="settings-email-input">Email Address</label>
+                  <input type="email" class="form-input" id="settings-email-input" disabled />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="settings-tz-select">Time Zone</label>
+                  <select class="form-select" id="settings-tz-select">
+                    <option value="UTC">UTC</option>
+                    <option value="America/New_York">America/New_York (EST)</option>
+                    <option value="America/Chicago">America/Chicago (CST)</option>
+                    <option value="America/Denver">America/Denver (MST)</option>
+                    <option value="America/Los_Angeles">America/Los_Angeles (PST)</option>
+                    <option value="Europe/London">Europe/London (GMT)</option>
+                    <option value="Europe/Paris">Europe/Paris (CET)</option>
+                    <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
+                    <option value="Asia/Tokyo">Asia/Tokyo (JST)</option>
+                    <option value="Australia/Sydney">Australia/Sydney (AEST)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="settings-theme-select">Theme Preference</label>
+                  <select class="form-select" id="settings-theme-select">
+                    <option value="system">System Default</option>
+                    <option value="light">Light Mode</option>
+                    <option value="dark">Dark Mode</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <button type="submit" class="btn-primary">Save Profile</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Change Password -->
+          <div class="metric-card" style="display: block;">
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 16px;">Security &amp; Password</h3>
+            <form id="settings-password-form" style="display: flex; flex-direction: column; gap: 14px;">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="settings-curr-pwd">Current Password</label>
+                  <input type="password" class="form-input" id="settings-curr-pwd" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="settings-new-pwd">New Password (Min 6 chars)</label>
+                  <input type="password" class="form-input" id="settings-new-pwd" minlength="6" required />
+                </div>
+              </div>
+              <div>
+                <button type="submit" class="btn-secondary">Update Password</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Notifications Center Settings -->
+          <div class="metric-card" style="display: block;">
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 12px;">Browser Notifications</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 14px;">
+              Receive real-time alerts on your device for scheduled task reminders and deadlines.
+            </p>
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+              <div id="notif-permission-status" style="font-size: 0.9rem;">Checking status...</div>
+              <button type="button" class="btn-primary" id="enable-notifications-btn">Request Notification Permission</button>
+            </div>
+          </div>
+
+          <!-- Custom Categories Manager -->
+          <div class="metric-card" style="display: block;">
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 16px;">Manage Categories</h3>
+            <form id="settings-new-cat-form" style="display: flex; gap: 10px; margin-bottom: 16px;">
+              <input type="text" class="form-input" id="new-cat-name" placeholder="New category name..." required style="flex: 1;" />
+              <input type="color" id="new-cat-color" value="#4f46e5" style="width: 44px; height: 44px; border: 1px solid var(--border-color); border-radius: var(--radius-md); cursor: pointer; padding: 2px;" />
+              <button type="submit" class="btn-secondary">+ Add</button>
+            </form>
+            <div id="settings-categories-list">
+              <!-- Dynamically rendered -->
+            </div>
+          </div>
+
+          <!-- Backup & Data Export / Import -->
+          <div class="metric-card" style="display: block;">
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 12px;">Data Backup &amp; Portability</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 14px;">
+              Export your full tasks database or import a previously exported JSON backup.
+            </p>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 14px;">
+              <button class="btn-secondary" id="export-json-btn">⬇️ Export JSON</button>
+              <button class="btn-secondary" id="export-csv-btn">⬇️ Export CSV</button>
+              <label class="btn-secondary" style="cursor: pointer;">
+                ⬆️ Import JSON Backup
+                <input type="file" id="import-file-input" accept=".json" style="display: none;" />
+              </label>
+            </div>
+          </div>
+
+          <!-- Danger Zone -->
+          <div class="metric-card" style="display: block; border-color: rgba(239, 68, 68, 0.4);">
+            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--danger); margin-bottom: 8px;">Danger Zone</h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 14px;">
+              Permanently delete your account, credentials, and all tasks. This action cannot be reversed.
+            </p>
+            <button class="btn-danger" id="delete-account-btn">Delete Account</button>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="mobile-bottom-nav" role="navigation" aria-label="Mobile Navigation">
+    <a class="mobile-nav-item active" data-view="dashboard" role="button">
+      <span class="mobile-nav-icon" aria-hidden="true">📊</span>
+      <span>Home</span>
+    </a>
+    <a class="mobile-nav-item" data-view="tasks" role="button">
+      <span class="mobile-nav-icon" aria-hidden="true">📝</span>
+      <span>Tasks</span>
+    </a>
+    <a class="mobile-nav-item" data-view="calendar" role="button">
+      <span class="mobile-nav-icon" aria-hidden="true">📅</span>
+      <span>Calendar</span>
+    </a>
+    <a class="mobile-nav-item" data-view="upcoming" role="button">
+      <span class="mobile-nav-icon" aria-hidden="true">⏳</span>
+      <span>Upcoming</span>
+    </a>
+    <a class="mobile-nav-item" data-view="completed" role="button">
+      <span class="mobile-nav-icon" aria-hidden="true">✅</span>
+      <span>Done</span>
+    </a>
+    <a class="mobile-nav-item" data-view="settings" role="button">
+      <span class="mobile-nav-icon" aria-hidden="true">⚙️</span>
+      <span>Settings</span>
+    </a>
+  </nav>
+
+  <!-- Mobile Floating Action Button -->
+  <button class="mobile-fab" id="mobile-fab-btn" title="Create Task" aria-label="Create new task">+</button>
+
+</div>
+
+<!-- ==========================================================================
+     MODALS
+     ========================================================================== -->
+
+<!-- Task Create / Edit Modal -->
+<div class="modal-overlay" id="task-modal" role="dialog" aria-modal="true" aria-labelledby="task-modal-title">
+  <div class="modal-window">
+    <div class="modal-header">
+      <h3 class="modal-title" id="task-modal-title">Create New Task</h3>
+      <button class="action-btn modal-close-btn" aria-label="Close modal">✕</button>
+    </div>
+
+    <form id="task-form">
+      <input type="hidden" id="task-id-input" />
+      <div class="modal-body">
+        <!-- Title -->
+        <div class="form-group">
+          <label class="form-label" for="task-title-input">Task Title *</label>
+          <input type="text" class="form-input" id="task-title-input" placeholder="e.g. Complete quarterly financial review" required maxlength="255" />
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label class="form-label" for="task-desc-input">Description (Optional)</label>
+          <textarea class="form-textarea" id="task-desc-input" rows="2" placeholder="Add helpful notes, agenda, or links..."></textarea>
+        </div>
+
+        <!-- Date & Time (Supports unlimited future dates/years) -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="task-date-input">Scheduled Date *</label>
+            <input type="date" class="form-input" id="task-date-input" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="task-time-input">Start Time (Optional)</label>
+            <input type="time" class="form-input" id="task-time-input" />
+          </div>
+        </div>
+
+        <!-- Priority & Category -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="task-priority-input">Priority</label>
+            <select class="form-select" id="task-priority-input">
+              <option value="LOW">Low</option>
+              <option value="MEDIUM" selected>Medium</option>
+              <option value="HIGH">High</option>
+              <option value="URGENT">Urgent</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="task-category-input">Category</label>
+            <select class="form-select category-select" id="task-category-input">
+              <option value="">Select Category</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Deadline -->
+        <div class="form-group">
+          <label class="form-label" for="task-deadline-input">Deadline / Due Date (Optional)</label>
+          <input type="datetime-local" class="form-input" id="task-deadline-input" />
+        </div>
+
+        <!-- Recurrence Settings -->
+        <div class="form-group">
+          <label class="form-label" for="task-recurrence-input">Recurrence (Repeat Schedule)</label>
+          <select class="form-select" id="task-recurrence-input" onchange="TaskManager.toggleRecurrenceFields()">
+            <option value="NONE">Does not repeat</option>
+            <option value="DAILY">Daily</option>
+            <option value="WEEKLY">Weekly</option>
+            <option value="MONTHLY">Monthly</option>
+            <option value="YEARLY">Yearly</option>
+          </select>
+        </div>
+
+        <div class="form-row" id="recurrence-extra-fields" style="display: none;">
+          <div class="form-group">
+            <label class="form-label" for="task-interval-input">Repeat Interval</label>
+            <input type="number" class="form-input" id="task-interval-input" min="1" value="1" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="task-recurrence-end-input">End Repeat By</label>
+            <input type="date" class="form-input" id="task-recurrence-end-input" />
+          </div>
+        </div>
+
+        <!-- Reminder Settings -->
+        <div class="form-group">
+          <label class="form-label">Reminders (Multiple can be selected)</label>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; font-size: 0.85rem; margin-top: 4px;">
+            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+              <input type="checkbox" name="reminder-offset" value="0" /> At task time
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+              <input type="checkbox" name="reminder-offset" value="15" /> 15 min before
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+              <input type="checkbox" name="reminder-offset" value="30" /> 30 min before
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+              <input type="checkbox" name="reminder-offset" value="60" /> 1 hour before
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+              <input type="checkbox" name="reminder-offset" value="1440" /> 1 day before
+            </label>
+          </div>
+        </div>
+
+        <!-- Subtasks Checklist -->
+        <div class="form-group">
+          <label class="form-label">Subtasks / Checklist</label>
+          <div class="subtask-input-row">
+            <input type="text" class="form-input" id="new-subtask-input" placeholder="Add a subtask..." />
+            <button type="button" class="btn-secondary" onclick="TaskManager.addSubtask()">Add</button>
+          </div>
+          <div class="subtask-list-container" id="subtasks-container"></div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary modal-close-btn">Cancel</button>
+        <button type="submit" class="btn-primary" id="save-task-btn">Save Task</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Calendar Day Detail Modal -->
+<div class="modal-overlay" id="day-detail-modal" role="dialog" aria-modal="true">
+  <div class="modal-window">
+    <div class="modal-header">
+      <h3 class="modal-title" id="day-modal-title">Tasks for Date</h3>
+      <button class="action-btn modal-close-btn" aria-label="Close modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display: flex; justify-content: flex-end; margin-bottom: 8px;">
+        <button class="btn-primary" id="day-add-task-btn" style="padding: 6px 12px; font-size: 0.85rem;">+ Add Task for This Day</button>
+      </div>
+      <div class="task-list" id="day-tasks-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- In-App Notification Center Modal -->
+<div class="modal-overlay" id="notification-modal" role="dialog" aria-modal="true">
+  <div class="modal-window">
+    <div class="modal-header">
+      <h3 class="modal-title">Notification &amp; Reminders Center</h3>
+      <button class="action-btn modal-close-btn" aria-label="Close modal">✕</button>
+    </div>
+    <div class="modal-body" id="notification-list">
+      <!-- Dynamic notification list -->
+    </div>
+  </div>
+</div>
+
+<!-- Authentication Modal (Sign In / Register / Reset) -->
+<div class="modal-overlay" id="auth-modal" role="dialog" aria-modal="true">
+  <div class="modal-window" style="max-width: 440px;">
+    <div class="modal-header" style="justify-content: center; position: relative;">
+      <h3 class="modal-title">Welcome to SecureTodo</h3>
+    </div>
+
+    <!-- Tab Buttons -->
+    <div style="display: flex; border-bottom: 1px solid var(--border-color); background: var(--bg-tertiary);">
+      <button class="auth-tab-btn active" data-tab="login" style="flex: 1; padding: 12px; border: none; background: none; font-weight: 600; cursor: pointer; color: var(--text-primary);">Sign In</button>
+      <button class="auth-tab-btn" data-tab="register" style="flex: 1; padding: 12px; border: none; background: none; font-weight: 600; cursor: pointer; color: var(--text-muted);">Register</button>
+      <button class="auth-tab-btn" data-tab="reset" style="flex: 1; padding: 12px; border: none; background: none; font-weight: 600; cursor: pointer; color: var(--text-muted);">Reset</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Sign In Tab -->
+      <div class="auth-tab-content" id="auth-tab-login">
+        <form id="login-form" style="display: flex; flex-direction: column; gap: 14px;">
+          <div class="form-group">
+            <label class="form-label" for="login-email">Email Address</label>
+            <input type="email" class="form-input" id="login-email" required placeholder="you@example.com" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="login-password">Password</label>
+            <input type="password" class="form-input" id="login-password" required placeholder="••••••••" />
+          </div>
+          <button type="submit" class="btn-primary" style="justify-content: center; padding: 12px;">Sign In</button>
+        </form>
+      </div>
+
+      <!-- Register Tab -->
+      <div class="auth-tab-content" id="auth-tab-register" style="display: none;">
+        <form id="register-form" style="display: flex; flex-direction: column; gap: 14px;">
+          <div class="form-group">
+            <label class="form-label" for="reg-name">Your Full Name</label>
+            <input type="text" class="form-input" id="reg-name" required placeholder="Alex Smith" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-email">Email Address</label>
+            <input type="email" class="form-input" id="reg-email" required placeholder="you@example.com" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-password">Password (Minimum 6 chars)</label>
+            <input type="password" class="form-input" id="reg-password" minlength="6" required placeholder="••••••••" />
+          </div>
+          <button type="submit" class="btn-primary" style="justify-content: center; padding: 12px;">Create Account</button>
+        </form>
+      </div>
+
+      <!-- Password Reset Tab -->
+      <div class="auth-tab-content" id="auth-tab-reset" style="display: none;">
+        <form id="reset-form" style="display: flex; flex-direction: column; gap: 14px;">
+          <div class="form-group">
+            <label class="form-label" for="reset-email">Account Email</label>
+            <input type="email" class="form-input" id="reset-email" required placeholder="you@example.com" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reset-password">New Password</label>
+            <input type="password" class="form-input" id="reset-password" minlength="6" required placeholder="New password" />
+          </div>
+          <button type="submit" class="btn-primary" style="justify-content: center; padding: 12px;">Reset Password</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Confirmation Dialog Modal -->
+<div class="modal-overlay" id="confirm-modal" role="dialog" aria-modal="true">
+  <div class="modal-window" style="max-width: 420px;">
+    <div class="modal-header">
+      <h3 class="modal-title">Please Confirm</h3>
+      <button class="action-btn modal-close-btn" aria-label="Close modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <p id="confirm-modal-msg" style="font-size: 0.95rem; color: var(--text-secondary);"></p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-secondary modal-close-btn">Cancel</button>
+      <button type="button" class="btn-danger" id="confirm-modal-yes">Yes, Proceed</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Alert Container -->
+<div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+<!-- Application JavaScript Bundles -->
+<script src="/js/api.js"></script>
+<script src="/js/tasks.js"></script>
+<script src="/js/calendar.js"></script>
+<script src="/js/notifications.js"></script>
+<script src="/js/app.js"></script>
+
+</body>
+</html>
+
