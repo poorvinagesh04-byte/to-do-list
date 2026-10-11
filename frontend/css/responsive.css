@@ -1,0 +1,228 @@
+/* ==========================================================================
+   Responsive Layout & Mobile-First Bottom Navigation
+   ========================================================================== */
+
+/* Mobile Bottom Navigation (Hidden on desktop by default) */
+.mobile-bottom-nav {
+  display: none;
+}
+
+.mobile-fab {
+  display: none;
+}
+
+/* Tablet & Mobile Breakpoint (<= 860px) */
+@media (max-width: 860px) {
+  #app-root {
+    flex-direction: column;
+  }
+
+  /* Hide Desktop Sidebar */
+  .sidebar {
+    display: none;
+  }
+
+  /* Show Bottom Navigation Bar */
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 64px;
+    background-color: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    z-index: 900;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+    padding: 0 4px;
+  }
+
+  .mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    flex: 1;
+    height: 100%;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.7rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color var(--transition-fast);
+    position: relative;
+  }
+
+  .mobile-nav-item.active {
+    color: var(--primary);
+    font-weight: 700;
+  }
+
+  .mobile-nav-icon {
+    font-size: 1.25rem;
+  }
+
+  /* Floating Action Button (FAB) for quick task creation on mobile */
+  .mobile-fab {
+    display: flex;
+    position: fixed;
+    bottom: 76px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-full);
+    background-color: var(--primary);
+    color: #ffffff;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.7rem;
+    box-shadow: 0 8px 20px var(--primary-glow);
+    z-index: 850;
+    border: none;
+    cursor: pointer;
+    transition: transform var(--transition-fast);
+  }
+
+  .mobile-fab:active {
+    transform: scale(0.92);
+  }
+
+  /* View content takes full width and leaves room for bottom nav */
+  .main-wrapper {
+    height: 100vh;
+  }
+
+  .view-content {
+    padding: 16px;
+    padding-bottom: 90px;
+  }
+
+  /* Dashboard stacks into single column */
+  .dashboard-columns {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .dashboard-welcome {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 18px;
+  }
+
+  .progress-card {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .days-strip {
+    gap: 4px;
+  }
+
+  .day-pill {
+    padding: 6px 2px;
+  }
+
+  .day-pill-name {
+    font-size: 0.68rem;
+  }
+
+  .day-pill-number {
+    font-size: 0.95rem;
+  }
+
+  /* Calendar cells on mobile */
+  .calendar-day-cell {
+    min-height: 70px;
+    padding: 4px;
+  }
+
+  .day-cell-top {
+    margin-bottom: 2px;
+  }
+
+  .day-num {
+    font-size: 0.8rem;
+    width: 20px;
+    height: 20px;
+  }
+
+  .day-task-count {
+    font-size: 0.65rem;
+    padding: 0 4px;
+  }
+
+  .cal-task-pill {
+    display: none; /* Hide text pills on small screens, show indicator dots instead */
+  }
+
+  .day-dots {
+    display: flex;
+    gap: 2px;
+    justify-content: center;
+    margin-top: 2px;
+  }
+
+  .day-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-full);
+    background-color: var(--primary);
+  }
+
+  /* Form inputs stack vertically */
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-window {
+    max-height: 95vh;
+  }
+
+  .task-card .task-actions {
+    opacity: 1; /* Always visible on touch devices */
+  }
+
+  .toast-container {
+    bottom: 80px;
+    left: 16px;
+    right: 16px;
+  }
+}
+
+/* Small mobile devices (<= 480px) */
+@media (max-width: 480px) {
+  .topbar {
+    padding: 0 16px;
+  }
+
+  .view-title {
+    font-size: 1.15rem;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-input-wrap {
+    min-width: 100%;
+  }
+
+  .filter-select {
+    width: 100%;
+  }
+}
+
